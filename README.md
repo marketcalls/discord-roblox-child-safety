@@ -4,6 +4,8 @@
 
 It works with Claude Code, Claude Desktop, OpenAI Codex, Cursor and Google Antigravity, and even with AI tools that can't use a browser (you run one small script yourself, then the AI reads the file).
 
+![How it works: you log in, the AI reads every DM read-only, you get a private report](docs/images/how-it-works.jpg)
+
 ---
 
 ## Why this exists
@@ -53,6 +55,23 @@ A private report (on your own computer) that says, in plain language:
 5. **Usage charts** — messages per day, and what time of night they're online.
 6. **Photos and calls** — what was shared, with whom, and how long calls lasted.
 7. **Next steps** — how to talk to your child, how to set limits without making things worse, how to report someone, and helplines for your country.
+
+![Example report with made-up data: an urgent banner, then every contact with a risk level and the reason](docs/images/example-report.jpg)
+
+![Example usage charts with made-up data: messages per day by month, and what time of night the child is online](docs/images/example-usage.jpg)
+
+*Pictures use invented example data only.*
+
+## Real cases it learned from (2021–2026)
+
+The warning signs this tool looks for come from real, publicly reported cases, not guesses. The full list with sources is in [`real-world-cases.md`](.claude/skills/child-safety-expert/rules/real-world-cases.md). A few examples:
+
+- **Grooming that moved from Roblox to Discord.** News investigations found dozens of US prosecutions in which adults groomed, kidnapped or abused children they first met in games and then talked to on Discord. In one 2025 case a 10-year-old was taken more than 250 miles by a man she met on Roblox and Discord.
+- **"Robux for pictures."** Several adults have gone to prison for pretending to be teenagers and offering Robux or gift cards to children in exchange for photos.
+- **Sextortion of teenage boys.** The FBI and NCMEC warn of a huge rise in scammers who trick boys into sending a picture and then demand money. Some boys have taken their own lives within hours.
+- **"764" groups.** Online networks that push children to hurt themselves on camera. Leaders have received prison sentences of 30 to 80 years.
+- **Scams.** "Free Nitro" QR codes and fake "Discord staff" that steal accounts, and fake "cheats" that stole more than 600,000 Roblox accounts.
+- **Courts and governments.** About a dozen US states have taken legal action against Roblox or Discord over child safety, and both companies have changed their safety settings as a result.
 
 ## What it will never do
 

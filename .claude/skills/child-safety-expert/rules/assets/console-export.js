@@ -76,7 +76,8 @@
 
   function attachmentsOf(acc) {
     if (!acc) return [];
-    const urls = [...acc.querySelectorAll('a[href], img, video, source')].map(x => x.href || x.src).filter(u => u && /\/attachments\/\d+\/\d+\//.test(u));
+    const isAttachment = raw => { try { const u = new URL(raw, location.href); return u.protocol === 'https:' && (u.hostname === 'cdn.discordapp.com' || u.hostname === 'media.discordapp.net') && /^\/attachments\/\d+\/\d+\/[^/]+$/.test(u.pathname); } catch { return false; } };
+    const urls = [...acc.querySelectorAll('a[href], img, video, source')].map(x => x.href || x.src).filter(u => u && isAttachment(u));
     const out = new Map();
     for (const u of urls) {
       const clean = u.split('?')[0].replace('media.discordapp.net', 'cdn.discordapp.com');

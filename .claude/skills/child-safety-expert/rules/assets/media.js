@@ -23,17 +23,25 @@
   const S = {}; const zips = {};
   const bc = new BroadcastChannel('__child_safety_zip');
 
+  // Only fetch real Discord attachment URLs (exact host + path), never anything else a message links to.
+  const ALLOWED_HOSTS = new Set(['cdn.discordapp.com', 'media.discordapp.net']);
+  function attachmentUrl(raw) {
+    let u; try { u = new URL(raw, location.href); } catch { return null; }
+    if (u.protocol !== 'https:' || !ALLOWED_HOSTS.has(u.hostname) || !/^\/attachments\/\d+\/\d+\/[^/]+$/.test(u.pathname)) return null;
+    u.hostname = 'cdn.discordapp.com'; // usually works even when DNS filters block media.discordapp.net
+    for (const p of ['format', 'width', 'height', 'quality']) u.searchParams.delete(p);
+    return u;
+  }
+
   function harvest(st, li, msg) {
     const acc = li.querySelector('[id^="message-accessories-"]'); if (!acc) return;
-    const urls = [...acc.querySelectorAll('a[href], img, video, source')].map(x => x.href || x.src).filter(u => u && /\/attachments\/\d+\/\d+\//.test(u));
+    const urls = [...acc.querySelectorAll('a[href], img, video, source')].map(x => attachmentUrl(x.href || x.src)).filter(Boolean);
     for (const u of urls) {
-      const key = (u.match(/\/attachments\/\d+\/(\d+)\//) || [])[1]; if (!key || st.files.has(key)) continue;
-      const fn = decodeURIComponent(u.split('?')[0].split('/').pop()); if (!/\.(jpe?g|png|webp|heic|gif|mov|mp4)$/i.test(fn)) continue;
+      const key = u.pathname.split('/')[3]; if (!key || st.files.has(key)) continue;
+      const fn = decodeURIComponent(u.pathname.split('/').pop()); if (!/\.(jpe?g|png|webp|heic|gif|mov|mp4)$/i.test(fn)) continue;
       const rec = { key, msg: msg.id, who: msg.who, ts: msg.ts, fn, blob: null, note: '', exclude: false };
       st.files.set(key, rec);
-      // cdn.discordapp.com usually works even when DNS filters block media.discordapp.net
-      rec.p = fetch(u.replace('media.discordapp.net', 'cdn.discordapp.com').replace(/([?&])(format|width|height|quality)=[^&]*/g, '$1'))
-        .then(r => r.ok ? r.blob() : null).then(b => { rec.blob = b; }).catch(() => {});
+      rec.p = fetch(u.href, { credentials: 'omit' }).then(r => r.ok ? r.blob() : null).then(b => { rec.blob = b; }).catch(() => {});
     }
   }
 
