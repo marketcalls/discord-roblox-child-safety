@@ -3,6 +3,7 @@
 ## Display names lie — resolve aliases
 - The DM list shows a display name the contact can change anytime (a cute, girly name can belong to an adult man).
 - Inside the chat, check: how the child greets them ("hey <nickname>"), letters addressed to them, "call me…", their server name/tag, what other friends call them in other DMs.
+- Use the **user ID** (`author_id` in exports v1.3+, taken from the avatar URL) as the stable identity: it stays the same when someone changes their display name, and two accounts with the same name have different IDs.
 - Search the whole export for each nickname — friends often describe the person ("he's 18", "he deletes messages", "people call him a pedo").
 
 ## Age

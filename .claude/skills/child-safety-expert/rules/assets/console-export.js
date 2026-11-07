@@ -110,13 +110,18 @@
       const art = li.querySelector('[role="article"]') || li;
       const head = ((art.getAttribute('aria-labelledby') || '').match(/message-username-(\d+)/) || [])[1] || null;
       const u = li.querySelector('[id^="message-username-"]');
+      const nameEl = u ? u.querySelector('[class*="username"]') : null;          // name only, without badges
+      const tagEl = li.querySelector('[class*="botTag"]');                        // Discord-rendered badge: APP / OFFICIAL / SYSTEM (cannot be faked by a display name)
+      const av = [...li.querySelectorAll('img')].map(i => i.src).find(s => /cdn\.discordapp\.com\/avatars\/\d+\//.test(s)) || '';
       const c = li.querySelector('[id="message-content-' + id + '"]');
       const acc = li.querySelector('[id^="message-accessories-"]');
       const reply = li.querySelector('[id^="message-reply-context-"]');
       const links = acc ? [...acc.querySelectorAll('a[href]')].map(a => a.href).filter(h => !/discord(app)?\.(com|net)\/(channels|attachments)/.test(h)) : [];
       recs.set(id, {
         id, ts: snowISO(id), head,
-        author: u ? u.innerText.replace(/\s+/g, ' ').trim() : null,
+        author: u ? ((nameEl || u).innerText || '').replace(/\s+/g, ' ').trim() : null,
+        author_id: (av.match(/\/avatars\/(\d+)\//) || [])[1] || null,              // user ID from the avatar URL (stable even if the name changes)
+        author_tag: tagEl ? tagEl.innerText.replace(/\s+/g, ' ').trim().toUpperCase() : null,
         text: c ? c.innerText.trim() : '',
         reply: reply ? reply.innerText.replace(/\s+/g, ' ').trim().slice(0, 160) : '',
         attachments: attachmentsOf(acc),
@@ -155,13 +160,18 @@
     for (const d of state.dms) {
       const recs = state.store[d.id]; if (!recs) continue;
       const arr = [...recs.values()].sort((a, b) => cmpId(a.id, b.id)); let last = null;
-      for (const r of arr) { if (r.author) last = r.author; else r.author = (r.head && recs.get(r.head)?.author) || last || '?'; }
+      // grouped (continuation) messages have no header: inherit author, id and badge from the group's first message
+      for (const r of arr) {
+        if (r.author) { last = r; continue; }
+        const h = (r.head && recs.get(r.head)?.author) ? recs.get(r.head) : last;
+        r.author = h?.author || '?'; r.author_id = r.author_id || h?.author_id || null; r.author_tag = r.author_tag || h?.author_tag || null;
+      }
       const since = state.opts?.since ? state.opts.since + 'T00:00:00Z' : null;
       channels.push({ id: d.id, label: d.label, type: d.type, status: d.status || '',
         messages: arr.filter(r => !since || r.ts >= since).map(({ head, ...r }) => r) });
     }
     if (!state.servers) listServers();
-    return { tool: 'discord-roblox-child-safety/console-export.js', version: '1.2', exported_at: new Date().toISOString(),
+    return { tool: 'discord-roblox-child-safety/console-export.js', version: '1.3', exported_at: new Date().toISOString(),
       since: state.opts?.since || null, timezone_of_browser: Intl.DateTimeFormat().resolvedOptions().timeZone,
       servers: state.servers || [], channels };
   }
@@ -222,7 +232,7 @@
     run(Object.assign({}, state.opts || {}, opts, { only: unfinished })); return 'resuming ' + unfinished.length + ' chat(s); watch dmExport.status()';
   }
 
-  window.dmExport = { version: '1.2', listDMs, listServers, run, resume, status, save, toJSON, stop: () => { state.stopFlag = true; return 'stopping after current step'; }, _state: state, _extract: extract, _open: open };
+  window.dmExport = { version: '1.3', listDMs, listServers, run, resume, status, save, toJSON, stop: () => { state.stopFlag = true; return 'stopping after current step'; }, _state: state, _extract: extract, _open: open };
   console.log('%cdmExport loaded (read-only).', 'font-weight:bold', '\nNext:  dmExport.run({ since: "2026-01-01" })   then watch progress with dmExport.status()');
 })();
 'dmExport loaded';

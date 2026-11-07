@@ -122,7 +122,28 @@ def guess_child(channels):
     return presence.most_common(1)[0][0] if presence else None
 
 
-def is_bot(name):
+OFFICIAL_SYSTEM_ID = "643945264868098049"  # Discord's official system account (verified via avatar URL in exports v1.3+)
+
+
+def has_verified_fields(channels):
+    """Exports made with console-export.js v1.3+ carry the Discord-rendered badge and the author's user ID."""
+    return any("author_tag" in m or "author_id" in m for ch in channels for m in ch.get("messages", []))
+
+
+def is_official(m):
+    """True only for Discord's own system account — from the user ID or Discord's badge, never from a display name."""
+    tag = (m.get("author_tag") or "").upper()
+    return m.get("author_id") == OFFICIAL_SYSTEM_ID or "OFFICIAL" in tag or tag.startswith("SYSTEM")
+
+
+def is_app(m):
+    """True for bots/apps, from Discord's APP/BOT badge (a display name containing 'APP' does not count)."""
+    tag = (m.get("author_tag") or "").upper()
+    return bool(re.search(r"\b(APP|BOT)\b", tag)) and not is_official(m)
+
+
+def name_looks_like_bot(name):
+    """Legacy fallback for old exports only. Display names can be faked — never use this to lower a risk level."""
     return bool(re.search(r"VERIFIED APP|\bAPP\b|\bBOT\b", name or ""))
 
 
@@ -149,6 +170,7 @@ def main():
     out = Path(a.out); (out / "transcripts").mkdir(parents=True, exist_ok=True)
     channels = load(a.exports)
     child = a.child or guess_child(channels)
+    verified = has_verified_fields(channels)
 
     def who(author):
         return "CHILD" if author == child else clean_name(author)
@@ -162,7 +184,19 @@ def main():
             continue
         label = clean_name(ch.get("label") or ch["id"])
         others = Counter(m["author"] for m in msgs if m.get("author") and m["author"] != child)
-        bot = all(is_bot(o) for o in others) if others else False
+        other_msgs = [m for m in msgs if m.get("author") and m["author"] != child]
+        # "kind" is informational only; it never changes the risk level
+        if verified and other_msgs and all(is_official(m) for m in other_msgs):
+            kind = "Discord system (verified)"
+        elif verified and other_msgs and all(is_app(m) for m in other_msgs):
+            kind = "Bot/app (verified badge)"
+        elif not verified and others and all(name_looks_like_bot(o) for o in others):
+            kind = "Bot? (unverified: old export)"
+        else:
+            kind = "Person"
+        impersonating = kind == "Person" and bool(re.search(r"discord|trust ?(and|&) ?safety|\bsupport\b|\bstaff\b|moderat|\badmin\b|nitro|\bsystem\b", label, re.I))
+        if impersonating:
+            kind = "Person — name imitates Discord/staff (likely scam)"
         cat_counts = {k: Counter() for k in CATS}
         hits = defaultdict(list)
         ages, grades, adult, selfnames = [], [], [], set()
@@ -229,13 +263,12 @@ def main():
             score += 5
         if n > 5000:
             score += 3
-        is_system = label.lower() in ("discord", "discord official") or label.lower().startswith("discord ")
         scam_hits = sum(cat_counts[k]["contact"] for k in ("verification_bot_scam", "roblox_cookie_theft", "scam_phishing", "sextortion_blackmail"))
-        level = ("System" if is_system else "Bot" if bot else
-                 "Critical" if score >= 60 or cat_counts["sextortion_blackmail"]["contact"] or cat_counts["coercion_764_style"]["contact"] >= 3 else
-                 "High" if score >= 30 or scam_hits else "Watch" if score >= 10 else "Low")
+        # Risk level is computed from content for EVERY contact — a name like "Discord" or a bot badge never lowers it.
+        level = ("Critical" if score >= 60 or cat_counts["sextortion_blackmail"]["contact"] or cat_counts["coercion_764_style"]["contact"] >= 3 else
+                 "High" if score >= 30 or impersonating or (scam_hits and kind != "Discord system (verified)") else "Watch" if score >= 10 else "Low")
         tzo = statistics.median(tz_hints[label]) if tz_hints.get(label) else None
-        contacts.append(dict(contact=label, channel_id=ch["id"], type=ch.get("type", "dm"), level=level, score=score, messages=n,
+        contacts.append(dict(contact=label, channel_id=ch["id"], type=ch.get("type", "dm"), level=level, kind=kind, score=score, messages=n,
                              by_child=n_child, late_share=f"{late_share:.0%}", first=msgs[0]["ts"][:10], last=msgs[-1]["ts"][:10],
                              other_names="; ".join(clean_name(o) for o, _ in others.most_common(3)),
                              self_names=", ".join(sorted(selfnames)), age_claims=len(ages), adult_indicators=len(adult),
@@ -301,11 +334,11 @@ def main():
     else:
         sm.append("- none matched (still read the transcripts of the closest friends)")
     sm.append("\n## 2. Contacts ranked by heuristic score\n")
-    sm.append("| Level | Contact | Msgs | Late (0-5h) | Ages said | Adult hints | Phone clock | sexual | grooming | sextortion | location | off-platform | scam | verify-bot | cookie theft | gambling |")
-    sm.append("|---|---|---:|---:|---:|---:|---|---|---|---|---|---|---|---|---|---|")
-    order = {"Critical": 0, "High": 1, "Watch": 2, "Low": 3, "Bot": 4, "System": 5}
+    sm.append("| Level | Contact | Kind | Msgs | Late (0-5h) | Ages said | Adult hints | Phone clock | sexual | grooming | sextortion | location | off-platform | scam | verify-bot | cookie theft | gambling |")
+    sm.append("|---|---|---|---:|---:|---:|---:|---|---|---|---|---|---|---|---|---|---|")
+    order = {"Critical": 0, "High": 1, "Watch": 2, "Low": 3}
     for r in sorted(contacts, key=lambda r: (order.get(r["level"], 9), -r["score"])):
-        sm.append(f"| {r['level']} | {md_cell(r['contact'])} | {r['messages']} | {r['late_share']} | {r['age_claims']} | {r['adult_indicators']} | {r['phone_clock_utc_offset']} | "
+        sm.append(f"| {r['level']} | {md_cell(r['contact'])} | {r['kind']} | {r['messages']} | {r['late_share']} | {r['age_claims']} | {r['adult_indicators']} | {r['phone_clock_utc_offset']} | "
                   f"{r['sexual']} | {r['grooming']} | {r['sextortion_blackmail']} | {r['location_meeting']} | {r['off_platform']} | {r['scam_phishing']} | "
                   f"{r['verification_bot_scam']} | {r['roblox_cookie_theft']} | {r['gambling']} |")
     sm.append("\nCounts are `by contact / by child`.\n")
@@ -331,13 +364,21 @@ def main():
     notices = []
     for ch in channels:
         lab = (ch.get("label") or "").strip()
-        if lab.lower() not in ("discord", "discord official") and not lab.lower().startswith("discord "):
-            continue
         for m in ch["messages"]:
+            if verified:
+                if not is_official(m):          # only Discord's real system account (ID/badge), never a look-alike name
+                    continue
+                note = ""
+            else:
+                if lab.lower() != "discord":    # old exports: best effort, clearly marked as unverified
+                    continue
+                note = " (UNVERIFIED — old export; a fake account could be named 'Discord')"
             t = re.sub(r"\s+", " ", " ".join(filter(None, [m.get("text", ""), m.get("embed", ""), m.get("system", "")])))
             if SYSTEM_NOTICE_RX.search(t):
-                notices.append(f"- {local(m['ts'], tz):%Y-%m-%d %H:%M} · `{md_cell(t[:220])}`")
+                notices.append(f"- {local(m['ts'], tz):%Y-%m-%d %H:%M} · `{md_cell(t[:220])}`{note}")
     sm.extend(notices[:60] or ["- none found (or the official Discord DM was not in the export)"])
+    sm.append("\nAccounts that merely *call themselves* Discord, Discord Staff or Trust & Safety are not listed here — "
+              "if one appears among the contacts, treat it as a likely scam (real Discord staff never DM you to ask for anything).")
     sm.append("\nAn \"application has added you to a server\" notice means the child once authorized a bot with the "
               "**Join servers for you** permission (often via a free Nitro/Robux \"verify\" button). Check Settings → Authorized Apps.\n")
 

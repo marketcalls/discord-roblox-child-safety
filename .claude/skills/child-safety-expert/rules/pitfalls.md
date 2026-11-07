@@ -1,6 +1,7 @@
 # Pitfalls (lessons from real reviews)
 
 1. **Wrong attribution causes panic.** In one review a photo of a neighbourhood was first reported as "she sent him a photo outside your house" — it was the *contact's* photo; the child had only promised to send one. Always re-check sender, direction and date before telling the parent anything about who sent what.
+2a. **Never trust a name for "system" or "bot".** Anyone can call themselves "Discord", "Discord Staff" or "Trust & Safety", or put "APP" in their name. Exports from v1.3 record Discord's own badge (APP / OFFICIAL) and each sender's user ID from their avatar; the official system account is ID 643945264868098049. `analyze.py` labels "System"/"Bot" only from those, always computes the risk level from content, and flags look-alike names as likely scams.
 2. **Display names hide identities.** A contact with a sweet, girly display name turned out to be an 18-year-old man. Resolve aliases (how the child addresses them, self-references, other chats) before profiling.
 3. **The child is often the biggest risk to themselves.** Read the child's messages to close friends for self-harm before hunting for strangers.
 4. **Keyword false positives.** Roblox trading slang: owner, slave, proof, leak, blacklist, staff, mm, tickets. Don't escalate on words alone.
