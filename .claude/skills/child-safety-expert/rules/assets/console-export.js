@@ -111,8 +111,11 @@
       const head = ((art.getAttribute('aria-labelledby') || '').match(/message-username-(\d+)/) || [])[1] || null;
       const u = li.querySelector('[id^="message-username-"]');
       const nameEl = u ? u.querySelector('[class*="username"]') : null;          // name only, without badges
-      const tagEl = li.querySelector('[class*="botTag"]');                        // Discord-rendered badge: APP / OFFICIAL / SYSTEM (cannot be faked by a display name)
-      const av = [...li.querySelectorAll('img')].map(i => i.src).find(s => /cdn\.discordapp\.com\/avatars\/\d+\//.test(s)) || '';
+      // Identity comes ONLY from this message's own header (name line): never from replies, embeds, links or attachments.
+      const header = u ? u.closest('h3') : null;
+      const tagEl = header ? header.querySelector('[class*="botTag"]') : null;    // Discord-rendered badge: APP / OFFICIAL (not fakeable by a display name)
+      const avImg = header && header.parentElement ? [...header.parentElement.children].find(el => el.tagName === 'IMG' && /avatar/i.test(el.className)) : null;
+      const av = avImg && /^https:\/\/cdn\.discordapp\.com\/avatars\/\d+\//.test(avImg.src) ? avImg.src : '';
       const c = li.querySelector('[id="message-content-' + id + '"]');
       const acc = li.querySelector('[id^="message-accessories-"]');
       const reply = li.querySelector('[id^="message-reply-context-"]');
@@ -160,11 +163,13 @@
     for (const d of state.dms) {
       const recs = state.store[d.id]; if (!recs) continue;
       const arr = [...recs.values()].sort((a, b) => cmpId(a.id, b.id)); let last = null;
-      // grouped (continuation) messages have no header: inherit author, id and badge from the group's first message
+      // Grouped (continuation) messages have no header. The display name may fall back to the previous sender,
+      // but the verified identity (author_id / author_tag) is inherited ONLY from the group's own head message.
       for (const r of arr) {
         if (r.author) { last = r; continue; }
-        const h = (r.head && recs.get(r.head)?.author) ? recs.get(r.head) : last;
-        r.author = h?.author || '?'; r.author_id = r.author_id || h?.author_id || null; r.author_tag = r.author_tag || h?.author_tag || null;
+        const headRec = r.head ? recs.get(r.head) : null;
+        r.author = headRec?.author || last?.author || '?';
+        r.author_id = headRec?.author_id || null; r.author_tag = headRec?.author_tag || null;
       }
       const since = state.opts?.since ? state.opts.since + 'T00:00:00Z' : null;
       channels.push({ id: d.id, label: d.label, type: d.type, status: d.status || '',

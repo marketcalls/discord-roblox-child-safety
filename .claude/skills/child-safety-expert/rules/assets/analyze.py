@@ -131,9 +131,10 @@ def has_verified_fields(channels):
 
 
 def is_official(m):
-    """True only for Discord's own system account — from the user ID or Discord's badge, never from a display name."""
+    """True only for Discord's own system account: the official user ID AND Discord's OFFICIAL/SYSTEM badge must
+    agree (both read from the message header by console-export.js v1.3+). Display names are never used."""
     tag = (m.get("author_tag") or "").upper()
-    return m.get("author_id") == OFFICIAL_SYSTEM_ID or "OFFICIAL" in tag or tag.startswith("SYSTEM")
+    return m.get("author_id") == OFFICIAL_SYSTEM_ID and ("OFFICIAL" in tag or tag.startswith("SYSTEM"))
 
 
 def is_app(m):
@@ -212,7 +213,10 @@ def main():
                 late += 1
             files = " ".join(f"[file: {x['file']}]" for x in m.get("attachments", []))
             lines.append(f"{lt:%Y-%m-%d %H:%M} | {who(m.get('author'))} | {('(reply: ' + m['reply'][:60] + ') ') if m.get('reply') else ''}{text.replace(chr(10), ' / ')} {files}".rstrip())
-            for k, c in CATS.items():
+            # Verified Discord system notices (ID + badge agree) are reported in summary §6, not scored as a contact.
+            # Everything else is always scored — no label or name can switch scoring off.
+            official_msg = verified and is_official(m)
+            for k, c in ([] if official_msg else CATS.items()):
                 if c["re"].search(text):
                     cat_counts[k][side] += 1
                     hits[k].append(i)
@@ -266,7 +270,7 @@ def main():
         scam_hits = sum(cat_counts[k]["contact"] for k in ("verification_bot_scam", "roblox_cookie_theft", "scam_phishing", "sextortion_blackmail"))
         # Risk level is computed from content for EVERY contact — a name like "Discord" or a bot badge never lowers it.
         level = ("Critical" if score >= 60 or cat_counts["sextortion_blackmail"]["contact"] or cat_counts["coercion_764_style"]["contact"] >= 3 else
-                 "High" if score >= 30 or impersonating or (scam_hits and kind != "Discord system (verified)") else "Watch" if score >= 10 else "Low")
+                 "High" if score >= 30 or impersonating or scam_hits else "Watch" if score >= 10 else "Low")
         tzo = statistics.median(tz_hints[label]) if tz_hints.get(label) else None
         contacts.append(dict(contact=label, channel_id=ch["id"], type=ch.get("type", "dm"), level=level, kind=kind, score=score, messages=n,
                              by_child=n_child, late_share=f"{late_share:.0%}", first=msgs[0]["ts"][:10], last=msgs[-1]["ts"][:10],
