@@ -1,0 +1,15 @@
+---
+description: Child-safety review of a kid's Discord/Roblox direct messages for a parent, guardian, teacher, counsellor or doctor (with parent consent) — export DMs read-only, analyse a discord_dm_export JSON, find grooming, sextortion, scams, self-harm, high-alert contacts, and write a private report.
+globs:
+alwaysApply: false
+---
+
+# Child-safety review (Cursor)
+
+Follow `AGENTS.md` at the repo root. It contains the non-negotiable safety rules and the workflow.
+
+- Export: `.claude/skills/dm-export/SKILL.md` (use Cursor's browser tools or Chrome DevTools / Playwright MCP attached to the parent's logged-in Chrome; otherwise have the parent paste `.claude/skills/child-safety-expert/rules/assets/console-export.js` into Chrome's Console).
+- Analyse: `python3 .claude/skills/child-safety-expert/rules/assets/analyze.py <export.json> --out review --tz <zone>`
+- Review and report: `.claude/skills/safety-review/SKILL.md`, with references in `.claude/skills/child-safety-expert/rules/`.
+
+Never handle the child's password, never write to the account, never open suspected sexual images of minors, keep all data local, and stop to alert the adult on any crisis sign.

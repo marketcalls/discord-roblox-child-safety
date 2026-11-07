@@ -1,0 +1,21 @@
+# Never commit real family data
+discord_dm_export_*.json
+*.export.json
+review/
+reviews/
+quick/
+transcripts/
+photos/
+exports/
+reports/
+*.zip
+dist/
+*-workspace/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+__pycache__/
+*.pyc
