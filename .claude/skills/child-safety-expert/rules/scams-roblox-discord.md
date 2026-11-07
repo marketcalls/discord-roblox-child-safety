@@ -13,6 +13,9 @@
 - **Account selling / buying**, "verified" badges, boosts.
 - **Token stealers** disguised as games, bots, or "beta testers needed" downloads.
 - **Crypto "investment"/doubling**, gift-card resale.
+- **"Join servers for you" verify bots** behind free Nitro/Robux offers: the app can keep adding the child to scam, gambling or worse servers and even get the account banned. Full details in `verification-bots-and-ban-evasion.md`.
+- **Roblox cookie theft:** "voice chat enabler", "game copier", "limited checker", "bot followers", "join anyone" tools, or "paste this into the console/address bar". These steal the Roblox login cookie and empty the account.
+- **Real-money gambling servers** (casino, coinflip, crash), sometimes using Minecraft or Roblox currency.
 
 ## What to check
 - Messages mentioning prices, Robux, Nitro, gift cards, UPI/PayPal/CashApp, "mm", tickets, proofs, limits.

@@ -39,6 +39,12 @@ CATS = {
     "coercion_764_style": dict(weight=3, rx=r"\b(cut ?signs?|fansign|carve|bite yourself|cut for me|do it on cam|prove (it|you did)|send proof of|obey|you belong to|lore (vid|video|pics?))\b"),
     "abuse_harassment": dict(weight=3, rx=r"(\bkys\b|kill yourself|i('?ll| will) (kill|find|hurt|beat) (you|u)|\bdox\w*|\bswat(ting)?\b|nobody (likes|loves|cares about) (you|u)|you'?re worthless|\bretard\w*|\bn[i1]gg\w*|\bf[a@]gg?\w*|\bwhore\b|\bslut\b)"),
     "scam_phishing": dict(weight=3, rx=r"(free nitro|nitro (giveaway|gift)|claim (your|ur|this|the) (gift|prize|nitro)|steam ?gift|verify (your|ur) account|scan (this|the) qr|qr code|accidentally reported|trust (and|&) safety|discord staff|hypesquad|account (will be|is going to be) (banned|disabled|deleted)|login code|2fa code|your token|investment|crypto|bitcoin|usdt|double (your|ur) money|free robux|robux generator|dupe|account (for sale|selling)|sell (my|your|ur) account)"),
+    # "Join servers for you" / verification-bot scams: free rewards that require authorizing a bot (see verification-bots-and-ban-evasion.md)
+    "verification_bot_scam": dict(weight=3, rx=r"(you('?ve| have) been gifted|accept (the )?nitro|redeem (your )?(\d[\d,]* )?(robux|nitro|reward)|\d[\d,]* (free )?robux|free (robux|nitro|items?|limiteds?)|claim (your )?(reward|robux|nitro)|verify (with|using|here|to (get|claim|access|join))|authori[sz]e (the |this )?(bot|app)|join servers for you|restore ?cord|vault ?cord|member (backup|restore)|backup bot|rejoin (our|the) (new )?server|we got (banned|termed|terminated)|new server link)"),
+    # Roblox account/cookie theft ("voice chat enabler", "game copier" etc. — scripts that steal the .ROBLOSECURITY cookie)
+    "roblox_cookie_theft": dict(weight=4, rx=r"(roblosecurity|\bcookie\b.*\b(roblox|account|logger)|roblox cookie|paste (this|it) (in|into) (the )?(console|inspect|address bar|url bar)|inspect element|javascript:|voice ?chat (enabler|unlocker)|game copier|copy (any )?games?|limited checker|bot followers?|join anyone|free (headless|korblox)|beam(ed|ing)? (your|ur)? ?(items|limiteds|account))"),
+    # Real-money gambling (casino servers, crash/coinflip, Minecraft/Roblox currency casinos)
+    "gambling": dict(weight=2, rx=r"\b(casino|gambl\w*|coin ?flip|roulette|jackpot|blackjack|slots?|crash (game|bet)|rakeback|wager\w*|stake\.com|bet (on|my|your|ur)|(deposit|withdraw)(ed|ing)? (robux|money|\$|₹))\b"),
     "money_trading": dict(weight=1, rx=r"\b(robux|rbx|nitro|gift ?card|upi|paytm|gpay|paypal|cash ?app|venmo|crypto|middle ?man|\bmm\b|cross-?trad\w*|limiteds?|\$\s?\d+|₹\s?\d+|\d+\s?(usd|inr|rs)\b|bought|paid|sell(ing)?)\b"),
     "off_platform": dict(weight=2, rx=r"\b(snap(chat)?|insta(gram)?|whats ?app|telegram|signal app|kik|my number|(your|ur) number|phone number|text me at|facetime)\b"),
     "location_meeting": dict(weight=3, rx=r"(where (do|r|are) (you|u) live|what city|which city|(your|ur) address|my address|pin ?code|zip ?code|which school|what school|(your|ur) school name|outside (your|ur|my) house|pic (of )?outside|meet (up|irl|in person)|come over|i'?ll (visit|come to) (you|u|ur)|fly (to|out to) (you|u))"),
@@ -75,11 +81,28 @@ def md_cell(v):
     return str(v).replace("|", "\\|").replace("`", "'").replace("\n", " ").replace("\r", " ")
 
 
+SERVER_FLAGS = {
+    "trading / middleman": r"\b(mm|middle ?man|trad(e|es|ing)|cross-?trad\w*|stocks?|deals?|market|values?|proofs?|vouch\w*|tickets?)\b",
+    "free rewards / Nitro / Robux": r"(free|giveaway|rewards?|claim|robux|nitro|gift)",
+    "cheats / exploits / leaks": r"(cheat|hack|exploit|executor|scripts?|aimbot|mod ?menu|crack|leaks?|dupe)",
+    "gambling": r"(casino|gambl|\bbet\b|coin ?flip|roulette|jackpot|crash|blackjack|slots)",
+    "adult / dating / 18+": r"(nsfw|18\+|🔞|adult|e-?girls?|e-?boys?|dating|lewd|hentai|porn|onlyfans|\bhot\b|spicy)",
+    "vent / self-harm / gore": r"(vent|depress|suicid|self ?harm|\bsh\b|\bcut\b|gore|void|darkness)",
+    "accounts / boosts / members for sale": r"(accounts?|boosts?|members|dm ?all|selling|shop|store)",
+}
+SERVER_FLAGS = {k: re.compile(v, re.I) for k, v in SERVER_FLAGS.items()}
+SYSTEM_NOTICE_RX = re.compile(r"(added you to|has added you|an application|warning|violat\w*|community guidelines|terms of service|"
+                              r"account (has been|is|was) (limited|restricted|suspended|disabled|banned)|banned|age (verification|assurance)|verify your age|suspicious)", re.I)
+
+
 def load(paths):
-    channels = []
+    channels = []; servers = {}
     for p in paths:
         data = json.loads(Path(p).read_text(encoding="utf-8"))
         channels.extend(data.get("channels", []))
+        for s in data.get("servers", []) or []:
+            servers[s.get("id")] = s.get("name", "")
+    load.servers = servers
     merged = {}
     for ch in channels:  # merge duplicates of the same channel across files
         m = merged.setdefault(ch["id"], {**ch, "messages": {}})
@@ -206,7 +229,11 @@ def main():
             score += 5
         if n > 5000:
             score += 3
-        level = "Bot" if bot else ("Critical" if score >= 60 or cat_counts["sextortion_blackmail"]["contact"] else "High" if score >= 30 else "Watch" if score >= 10 else "Low")
+        is_system = label.lower() in ("discord", "discord official") or label.lower().startswith("discord ")
+        scam_hits = sum(cat_counts[k]["contact"] for k in ("verification_bot_scam", "roblox_cookie_theft", "scam_phishing", "sextortion_blackmail"))
+        level = ("System" if is_system else "Bot" if bot else
+                 "Critical" if score >= 60 or cat_counts["sextortion_blackmail"]["contact"] or cat_counts["coercion_764_style"]["contact"] >= 3 else
+                 "High" if score >= 30 or scam_hits else "Watch" if score >= 10 else "Low")
         tzo = statistics.median(tz_hints[label]) if tz_hints.get(label) else None
         contacts.append(dict(contact=label, channel_id=ch["id"], type=ch.get("type", "dm"), level=level, score=score, messages=n,
                              by_child=n_child, late_share=f"{late_share:.0%}", first=msgs[0]["ts"][:10], last=msgs[-1]["ts"][:10],
@@ -274,11 +301,13 @@ def main():
     else:
         sm.append("- none matched (still read the transcripts of the closest friends)")
     sm.append("\n## 2. Contacts ranked by heuristic score\n")
-    sm.append("| Level | Contact | Msgs | Late (0-5h) | Ages said | Adult hints | Phone clock | sexual | grooming | sextortion | location | off-platform | scam |")
-    sm.append("|---|---|---:|---:|---:|---:|---|---|---|---|---|---|---|")
-    for r in contacts:
+    sm.append("| Level | Contact | Msgs | Late (0-5h) | Ages said | Adult hints | Phone clock | sexual | grooming | sextortion | location | off-platform | scam | verify-bot | cookie theft | gambling |")
+    sm.append("|---|---|---:|---:|---:|---:|---|---|---|---|---|---|---|---|---|---|")
+    order = {"Critical": 0, "High": 1, "Watch": 2, "Low": 3, "Bot": 4, "System": 5}
+    for r in sorted(contacts, key=lambda r: (order.get(r["level"], 9), -r["score"])):
         sm.append(f"| {r['level']} | {md_cell(r['contact'])} | {r['messages']} | {r['late_share']} | {r['age_claims']} | {r['adult_indicators']} | {r['phone_clock_utc_offset']} | "
-                  f"{r['sexual']} | {r['grooming']} | {r['sextortion_blackmail']} | {r['location_meeting']} | {r['off_platform']} | {r['scam_phishing']} |")
+                  f"{r['sexual']} | {r['grooming']} | {r['sextortion_blackmail']} | {r['location_meeting']} | {r['off_platform']} | {r['scam_phishing']} | "
+                  f"{r['verification_bot_scam']} | {r['roblox_cookie_theft']} | {r['gambling']} |")
     sm.append("\nCounts are `by contact / by child`.\n")
     sm.append("## 3. When the child is active (messages she/he sent)\n")
     sm.append(f"Between midnight and 5 AM: **{late_total} ({late_total / total_child:.0%})**.\n")
@@ -296,6 +325,41 @@ def main():
     else:
         sm.append("- no DM call records found")
     sm.append(f"\n## 5. Files\n\n{len(att_rows)} files listed in attachments.csv (with links). Review images only with the photo-review skill.\n")
+
+    # --- Discord's own system messages (official "Discord" DM): apps that added the child to servers, warnings, bans
+    sm.append("## 6. Discord system notices (apps that added the child to servers, warnings)\n")
+    notices = []
+    for ch in channels:
+        lab = (ch.get("label") or "").strip()
+        if lab.lower() not in ("discord", "discord official") and not lab.lower().startswith("discord "):
+            continue
+        for m in ch["messages"]:
+            t = re.sub(r"\s+", " ", " ".join(filter(None, [m.get("text", ""), m.get("embed", ""), m.get("system", "")])))
+            if SYSTEM_NOTICE_RX.search(t):
+                notices.append(f"- {local(m['ts'], tz):%Y-%m-%d %H:%M} · `{md_cell(t[:220])}`")
+    sm.extend(notices[:60] or ["- none found (or the official Discord DM was not in the export)"])
+    sm.append("\nAn \"application has added you to a server\" notice means the child once authorized a bot with the "
+              "**Join servers for you** permission (often via a free Nitro/Robux \"verify\" button). Check Settings → Authorized Apps.\n")
+
+    # --- Server names the child is in, flagged by risky keywords
+    servers = getattr(load, "servers", {}) or {}
+    sm.append(f"## 7. Servers the child is in ({len(servers)})\n")
+    if servers:
+        flagged = []
+        for sid, name in servers.items():
+            hits = [k for k, rx in SERVER_FLAGS.items() if rx.search(name or "")]
+            if hits:
+                flagged.append(f"| {md_cell(name)} | {', '.join(hits)} |")
+        if flagged:
+            sm.append("| Server name | Why it may matter |\n|---|---|")
+            sm.extend(flagged)
+        sm.append(f"\n{len(servers) - len(flagged)} other server(s) had no warning words in their name. Names can mislead; "
+                  "ask the child what each flagged server is for.\n")
+        with open(out / "servers.csv", "w", newline="", encoding="utf-8") as f:
+            w = csv.writer(f); w.writerow(["server_id", "name", "flags"])
+            w.writerows([[csv_safe(sid), csv_safe(n), "; ".join(k for k, rx in SERVER_FLAGS.items() if rx.search(n or ""))] for sid, n in servers.items()])
+    else:
+        sm.append("- server list not in this export (older export, or run dmExport.listServers() before saving)\n")
     (out / "summary.md").write_text("\n".join(sm), encoding="utf-8")
     print(f"child={child} conversations={len(channels)} contacts_flagged={len(flags_md)} -> {out}/summary.md, flags.md")
 

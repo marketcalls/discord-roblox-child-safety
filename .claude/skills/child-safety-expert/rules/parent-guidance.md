@@ -22,4 +22,4 @@ Recommend a child & adolescent psychiatrist or psychologist whenever there is se
 Adults sexualising a child, sextortion and self-harm coercion are crimes. Save evidence (screenshots with usernames and dates), report on the platform, and to the national channel in `helplines.md`. Don't contact or warn the offender.
 
 ## Account hygiene (with the child)
-2FA via authenticator, sign out of all sessions, new password, privacy settings (DMs from friends only, explicit-media filter on, friend requests from friends-of-friends only), Discord Family Center, remove real name/school/city from profiles, no photos showing school, uniform, home or street.
+**User Settings → Authorized Apps:** remove unknown apps, especially any that can "Join servers for you" or see the friends list (`verification-bots-and-ban-evasion.md`). Never authorize a bot to get something free. 2FA via authenticator, sign out of all sessions, new password, privacy settings (DMs from friends only, explicit-media filter on, friend requests from friends-of-friends only), Discord Family Center, remove real name/school/city from profiles, no photos showing school, uniform, home or street.

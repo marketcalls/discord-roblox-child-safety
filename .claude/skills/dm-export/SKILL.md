@@ -15,7 +15,7 @@ Tool names per agent are in `child-safety-expert/rules/tool-adapters.md`.
 
 1. Open or select the Discord tab; take a screenshot to confirm the DM list is visible.
 2. Paste the **entire** `console-export.js` into the JavaScript tool once (it defines `window.dmExport`).
-3. `await dmExport.listDMs()` — show the adult the contact list. Agree the start date (default 12 months back) and whether to include group DMs (default no).
+3. `await dmExport.listDMs()` — show the adult the contact list. Open any closed server folders in the left sidebar, then `dmExport.listServers()` so the export includes the names of the servers the child is in. Keep the official "Discord" DM in the export — it holds system notices (apps that added the child to servers, warnings). Agree the start date (default 12 months back) and whether to include group DMs (default no).
 4. Start without awaiting (tool calls time out near 45 s):
    `dmExport.run({ since: '2026-01-01', includeGroups: false }); 'started'`
 5. Poll: `await new Promise(r => setTimeout(r, 35000)); dmExport.status()` — tell the adult what is happening. Keep the tab in the foreground (background tabs are throttled). Big chats (20k messages) take 6–8 minutes.

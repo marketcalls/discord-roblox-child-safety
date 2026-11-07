@@ -29,7 +29,10 @@
  *   skip           ['<channelId>', ...]  skip these DMs
  *   maxMinutesPerChat  number    safety cap per DM (default 20)
  *
- * Other commands: dmExport.listDMs()  dmExport.status()  dmExport.save()  dmExport.stop()
+ * The file also lists the NAMES of the servers your child is in (from the left sidebar) and keeps
+ * Discord's own system messages (e.g. "an application has added you to a server", warnings).
+ *
+ * Other commands: dmExport.listDMs()  dmExport.listServers()  dmExport.status()  dmExport.save()  dmExport.stop()
  *                 dmExport.resume()   re-reads only chats that stopped early ("stalled"/"time-cap")
  * Tip: keep this tab in front. Chrome slows down background tabs and Discord then loads
  *      old messages very slowly.
@@ -59,6 +62,18 @@
     if (sc) { sc.scrollTop = 0; for (let i = 0; i < 200; i++) { sc.scrollTop += 300; await sleep(150); collect(); if (sc.scrollTop + sc.clientHeight >= sc.scrollHeight - 2) break; } sc.scrollTop = 0; }
     state.dms = [...seen.values()];
     return state.dms.map(d => `${d.type === 'group' ? '[group] ' : ''}${d.label}  (${d.id})`).join('\n');
+  }
+
+  // Names of the servers the child is in (left sidebar). Open any closed server folders first to include them.
+  function listServers() {
+    const out = new Map();
+    document.querySelectorAll('[data-list-item-id^="guildsnav___"]').forEach(el => {
+      const id = el.getAttribute('data-list-item-id').replace('guildsnav___', ''); if (!/^\d+$/.test(id)) return;
+      const name = (el.closest('[data-dnd-name]')?.getAttribute('data-dnd-name') || el.querySelector('img[alt]')?.alt || el.innerText || '').replace(/\s+/g, ' ').trim();
+      out.set(id, { id, name });
+    });
+    state.servers = [...out.values()];
+    return state.servers.length + ' servers found';
   }
 
   function getScroller() {
@@ -145,8 +160,10 @@
       channels.push({ id: d.id, label: d.label, type: d.type, status: d.status || '',
         messages: arr.filter(r => !since || r.ts >= since).map(({ head, ...r }) => r) });
     }
-    return { tool: 'discord-roblox-child-safety/console-export.js', version: '1.0', exported_at: new Date().toISOString(),
-      since: state.opts?.since || null, timezone_of_browser: Intl.DateTimeFormat().resolvedOptions().timeZone, channels };
+    if (!state.servers) listServers();
+    return { tool: 'discord-roblox-child-safety/console-export.js', version: '1.2', exported_at: new Date().toISOString(),
+      since: state.opts?.since || null, timezone_of_browser: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      servers: state.servers || [], channels };
   }
 
   function save(name) {
@@ -169,6 +186,7 @@
     const o = Object.assign({ since: d12.toISOString().slice(0, 10), includeGroups: false, only: null, skip: [], maxMinutesPerChat: 20, autoSave: true }, opts);
     state.opts = o; state.stopFlag = false; state.startedAt = Date.now();
     if (!state.dms.length) await listDMs();
+    listServers();
     if (!state.dms.length) return 'No DMs found — open https://discord.com/channels/@me, wait until the DM list shows, then run again.';
     const q =state.dms.filter(d => (o.includeGroups || d.type === 'dm') && (!o.only || o.only.includes(d.id)) && !o.skip.includes(d.id));
     state.progress = { running: true, done: false, i: 0, total: q.length, current: '', log: [] };
@@ -204,7 +222,7 @@
     run(Object.assign({}, state.opts || {}, opts, { only: unfinished })); return 'resuming ' + unfinished.length + ' chat(s); watch dmExport.status()';
   }
 
-  window.dmExport = { version: '1.1', listDMs, run, resume, status, save, toJSON, stop: () => { state.stopFlag = true; return 'stopping after current step'; }, _state: state, _extract: extract, _open: open };
+  window.dmExport = { version: '1.2', listDMs, listServers, run, resume, status, save, toJSON, stop: () => { state.stopFlag = true; return 'stopping after current step'; }, _state: state, _extract: extract, _open: open };
   console.log('%cdmExport loaded (read-only).', 'font-weight:bold', '\nNext:  dmExport.run({ since: "2026-01-01" })   then watch progress with dmExport.status()');
 })();
 'dmExport loaded';

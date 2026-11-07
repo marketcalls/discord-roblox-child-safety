@@ -43,6 +43,7 @@ Also answer the parent's plain question directly: **strangers or school friends?
 - Self-harm and suicide timeline (dates, to whom, how recent).
 - Disclosures about home (report the child's side neutrally; recommend family/clinical help, no blame).
 - Account security: shared passwords, hacks, fake messages sent from the account.
+- **Apps and servers** (`summary.md` §6–7, `servers.csv`, `rules/verification-bots-and-ban-evasion.md`): apps that added the child to servers ("Join servers for you"), Discord warnings/limits, risky server names (free Robux/Nitro, trading/middleman, cheats, casino, 18+). If browser access allows, look (read-only) at **User Settings → Authorized Apps** with the parent and list apps that can join servers or read the friends list — the parent decides what to remove.
 - Identifying details leaked to online contacts (name, school, grade, city, state hints like language subjects, photos).
 - Usage: messages per day by month, hour-of-day, midnight–5 AM share; what drives the late nights (e.g., trading-server "tickets" in other time zones).
 - Calls (from `calls.csv`; DM calls only).

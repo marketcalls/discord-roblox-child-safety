@@ -24,6 +24,9 @@ Use this to rate every contact (handle) and to decide what is urgent. The analyz
 | coercion_764_style | cut signs, fansigns with blood, "lore" videos, "prove it", "obey", owner/pet with harm | trading-server "owner", game "proof" screenshots |
 | abuse_harassment | threats, "kys", slurs at the child, "nobody likes you", doxxing | friendly banter between peers |
 | scam_phishing | free Nitro/Steam gift links, QR "verify", "you were accidentally reported", fake staff, account selling, crypto doubling | real Nitro gifts between friends |
+| verification_bot_scam | "you've been gifted Nitro", "redeem 10,000 Robux", "verify with our bot", "authorize", "rejoin our new server", restore/backup bots | a real friend's `discord.gift` link |
+| roblox_cookie_theft | "voice chat enabler", "game copier", "limited checker", "bot followers", "join anyone", "paste this in console", ROBLOSECURITY | baking cookies |
+| gambling | casino, coinflip, crash, roulette, jackpot, "deposit/withdraw Robux" | game "bets" between friends with no money |
 | money_trading | Robux/Nitro/gift cards/UPI/PayPal, middleman ("mm"), cross-trading, dollar values | normal purchases |
 | off_platform | moving to Snapchat/Telegram/WhatsApp/Instagram, asking for phone number | school friends who already use these |
 | location_meeting | where do you live, what school, address, pic outside your house, meet up | real-life friends arranging to meet |

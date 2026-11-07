@@ -10,7 +10,7 @@
 2. [Financial sextortion and image-based extortion](#2-financial-sextortion-and-image-based-extortion)
 3. ["764" and "Com" networks](#3-764-and-com-networks)
 4. [Self-harm and suicide coercion](#4-self-harm-and-suicide-coercion)
-5. [Scams targeting kids](#5-scams-targeting-kids)
+5. [Scams targeting kids](#5-scams-targeting-kids) (including 5.8, "Join servers for you" verification bots)
 6. [Platform, regulatory and legal actions](#6-platform-regulatory-and-legal-actions)
 7. [Patterns to look for in a child's DMs](#7-patterns-to-look-for-in-a-childs-dms)
 8. [Statistics that help parents understand scale](#8-statistics-that-help-parents-understand-scale)
@@ -242,6 +242,13 @@
 - **Source:** Roblox Help, "Free Robux or Subscription Generators" — https://en.help.roblox.com/hc/en-us/articles/204262550-Free-Robux-or-Subscription-Generators ; Roblox, "Avoiding Frauds & Scams" — https://about.roblox.com/frauds-and-scams `[High]`; middleman pattern via parent guides and game-support pages such as Adopt Me support `[Low]`
 
 ---
+
+### 5.8 "Join servers for you" verification bots and ban evasion
+- **Date / place / platforms:** 2022–2026 · global · Discord (with Roblox-themed lures)
+- **What happened:** Public creator investigations documented member backup/"restore" bot services used in "verify" channels. Members who verify grant the OAuth2 *Join servers for you* permission, so the server owner can re-add everyone to a replacement server minutes after Discord bans the original. Investigators found these bots in six kinds of servers: free-Nitro and free-Robux scams, cybercrime servers (Roblox middleman scams, Roblox cookie-stealing "tool" videos), servers exploiting children, real-money gambling built on game currency, drug "roleplay", and account/boost markets and cheat servers. Authorized members were also sold in "member markets" to inflate new scam servers. Users added to servers that were later removed reported warnings and account bans. Some services also advertised logging verifiers' IP addresses, emails and friends lists to server owners.
+- **Visible chat signals:** a bot DM saying "you've been gifted Nitro" with an "accept" then "verify" step; "redeem 10,000 Robux" servers; "verify in #verify"; "we got termed, rejoin"; Discord's system message "an application has added you to the server…"; offers of a Roblox "voice chat enabler", "game copier", "limited checker", "bot followers" or "join anyone".
+- **Outcome:** Discord added a system notice when an app adds a user to a server, and reportedly (mid-2026) began limiting how many members flagged accounts or bots can pull. Operators reportedly work around this with new accounts and slower daily pulls. The permission still exists for legitimate uses such as Patreon perks and game-guild linking.
+- **Source:** public video investigations by Discord-safety content creators (2022–2026) and Discord's own authorization screen and system messages. Individual company claims are not independently verified here. `[Low]` for platform-change details, `[Med]` for the general mechanism, which can be checked on any authorization screen.
 
 ## 6. Platform, regulatory and legal actions
 

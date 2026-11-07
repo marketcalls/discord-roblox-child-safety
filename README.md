@@ -40,6 +40,8 @@ Professionals should always work **with the parent's or guardian's consent**. Th
 | 💸 Sextortion | "send money or I'll post your pictures" — especially aimed at teenage boys |
 | ⚠️ "764"-style groups | people pushing kids to hurt themselves on camera |
 | 🎣 Scams | free Nitro links, QR-code "verification", fake Discord staff, Roblox trading and "middleman" scams |
+| 🤖 "Join servers for you" bots | apps that keep adding your child to servers (even banned ones come back), Roblox "voice chat enabler" / "game copier" tools that steal accounts |
+| 🎰 Gambling | casino servers using Robux, game currency or real money |
 | 😡 Bullying and threats | insults, slurs, "kys", threats to share someone's address |
 | 📍 Private details leaked | real name, school, city, photos that show home or uniform |
 | 🌙 Healthy use | how many messages a day, how much happens between midnight and 5 AM |
@@ -72,6 +74,20 @@ The warning signs this tool looks for come from real, publicly reported cases, n
 - **"764" groups.** Online networks that push children to hurt themselves on camera. Leaders have received prison sentences of 30 to 80 years.
 - **Scams.** "Free Nitro" QR codes and fake "Discord staff" that steal accounts, and fake "cheats" that stole more than 600,000 Roblox accounts.
 - **Courts and governments.** About a dozen US states have taken legal action against Roblox or Discord over child safety, and both companies have changed their safety settings as a result.
+
+## A hidden danger most parents don't know about: "Join servers for you"
+
+Sometimes a bot sends your child a message like *"You've been gifted Nitro!"* or a server promises *"10,000 free Robux — click Verify"*. When your child clicks, Discord shows an "Authorize" screen. If it lists **"Join servers for you"**, that app can now **add your child to any server, any time**.
+
+People use this to:
+- pull children into scam, gambling, drug or even predator servers — and **bring everyone back within minutes after Discord bans the server**,
+- sell "members" to make fake servers look big and trustworthy,
+- collect your child's email, friends list and internet address (IP),
+- get your child's account **warned or banned**, because they keep being added to servers that break the rules.
+
+**What this tool checks:** Discord's own messages to your child (like *"An application has added you to the server…"*), account warnings, the names of every server your child is in (free Robux, trading, cheats, casino, 18+), and chats offering free rewards or "tools".
+
+**What you can do today, with your child:** open Discord → **User Settings → Authorized Apps**, and remove any app you don't recognise, especially ones that can "Join servers for you". Real Nitro gifts never need a bot. And never paste anything a stranger sends into the browser — that's how Roblox accounts get stolen.
 
 ## What it will never do
 
