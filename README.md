@@ -129,18 +129,18 @@ The `child-safety-expert` skill loads automatically and holds the knowledge the 
 
 | It looks for | Examples |
 |---|---|
-| Suicide and self-harm | "I want to die", goodbye letters, "I attempted", cutting, friends panicking at 3 AM |
-| Grooming by adults | age questions, "you're so mature", gifts, secrets, deleting messages, asking for photos or where you live |
-| Sexual talk | adults talking about sex with a child, "friends with benefits", "what are you wearing" |
-| Sextortion | "send money or I'll post your pictures", especially aimed at teenage boys |
-| "764"-style groups | people pushing kids to hurt themselves on camera |
-| Toxic relationships | jealousy ("who were you talking to?"), control ("don't talk to them"), guilt-tripping, put-downs, even between kids the same age |
-| Scams | free Nitro links, QR-code "verification", fake Discord staff, Roblox trading and "middleman" scams |
-| "Join servers for you" bots | apps that keep adding your child to servers (even banned ones come back), Roblox "voice chat enabler" or "game copier" tools that steal accounts |
-| Gambling | casino servers using Robux, game currency or real money |
-| Bullying and threats | insults, slurs, "kys", threats to share someone's address |
-| Private details leaked | real name, school, city, photos that show home or uniform |
-| Healthy use | how many messages a day, how much happens between midnight and 5 AM |
+| 🆘 Suicide and self-harm | "I want to die", goodbye letters, "I attempted", cutting, friends panicking at 3 AM |
+| 🧑‍🦱➡️👧 Grooming by adults | age questions, "you're so mature", gifts, secrets, deleting messages, asking for photos or where you live |
+| 🔞 Sexual talk | adults talking about sex with a child, "friends with benefits", "what are you wearing" |
+| 💸 Sextortion | "send money or I'll post your pictures", especially aimed at teenage boys |
+| ⚠️ "764"-style groups | people pushing kids to hurt themselves on camera |
+| 💔 Toxic relationships | jealousy ("who were you talking to?"), control ("don't talk to them"), guilt-tripping, put-downs, even between kids the same age |
+| 🎣 Scams | free Nitro links, QR-code "verification", fake Discord staff, Roblox trading and "middleman" scams |
+| 🤖 "Join servers for you" bots | apps that keep adding your child to servers (even banned ones come back), Roblox "voice chat enabler" or "game copier" tools that steal accounts |
+| 🎰 Gambling | casino servers using Robux, game currency or real money |
+| 😡 Bullying and threats | insults, slurs, "kys", threats to share someone's address |
+| 📍 Private details leaked | real name, school, city, photos that show home or uniform |
+| 🌙 Healthy use | how many messages a day, how much happens between midnight and 5 AM |
 
 ## What you get
 
@@ -218,11 +218,11 @@ The warning signs this tool looks for come from real, publicly reported cases, n
 
 ## What it will never do
 
-- It never asks for, types or stores your child's password. **You** log in.
-- It never sends, deletes or changes anything on your child's account. It only reads.
-- It never uploads your child's messages to any website or server. The files stay on your computer, and only the AI tool you chose reads them. Check that tool's privacy settings, for example turn off "use my chats for training".
-- It never opens or saves sexual images of children. If it suspects one, it gives you the link to report it instead (keeping such images is illegal, even for parents).
-- If it finds that your child may be in danger right now, it stops and tells you first.
+- ❌ It never asks for, types or stores your child's password. **You** log in.
+- ❌ It never sends, deletes or changes anything on your child's account. It only reads.
+- ❌ It never uploads your child's messages to any website or server. The files stay on your computer, and only the AI tool you chose reads them. Check that tool's privacy settings, for example turn off "use my chats for training".
+- ❌ It never opens or saves sexual images of children. If it suspects one, it gives you the link to report it instead (keeping such images is illegal, even for parents).
+- ✅ If it finds that your child may be in danger right now, it stops and tells you first.
 
 ## Prerequisites
 
