@@ -4,9 +4,34 @@
 
 You don't have to read your child's private chats yourself. The AI reads them, read-only, and gives you a private report: who your child talks to (school friends or strangers, kids or adults), a label for every relationship, anything urgent, and what to do next.
 
-Works with Claude Code, Claude Desktop, Cursor, OpenAI Codex, Google Antigravity, Gemini CLI and 40+ other AI agents. It even works with AI tools that can't control a browser: you run one small script yourself, then the AI reads the file.
+**Not comfortable with coding tools? You don't need them.** The ChatGPT and Claude apps can import these skills: download the ZIP files, upload them, and chat. [See how](#no-coding-tools-use-the-chatgpt-or-claude-app).
+
+Developers can use Claude Code, Cursor, OpenAI Codex, Google Antigravity, Gemini CLI and 40+ other AI agents.
 
 ![How it works: you log in, the AI reads the chats read-only, you get a private report with a label for every relationship](docs/images/how-it-works.jpg)
+
+## No coding tools? Use the ChatGPT or Claude app
+
+Many parents, teachers and counsellors never open a terminal, and that's fine. The ChatGPT and Claude apps can import and manage skills.
+
+**1. Download the skills.** Go to the [Releases page](https://github.com/marketcalls/discord-roblox-child-safety/releases/latest) and download the ZIP files. You need `child-safety-expert.zip` (the knowledge the others use) plus the ones you want, for example `safety-review.zip` and `quick-check.zip`.
+
+**2. Upload them to your AI app.**
+
+| App | Where to upload |
+|-----|-----------------|
+| **Claude** (claude.ai, Claude Desktop) | Settings → Capabilities → Skills → Upload skill. Upload each ZIP. Also turn on "Code execution and file creation" in the same Capabilities page so Claude can run the analyzer for you. |
+| **ChatGPT** | Open the Skills section (where your plan offers skills) and upload the same ZIP files. |
+
+**3. Save your child's messages to a file.** Follow the steps in "Way B" below: log in to your child's Discord in Chrome, paste one small read-only script into the Console, and a file called `discord_dm_export_….json` downloads.
+
+**4. Ask for the review.** Start a new chat, attach that file, and say:
+
+> *"Use the safety-review skill on this file. My child is 14 and we live in India. Tell me if each relationship is healthy, toxic or dangerous, and keep the healthy ones private."*
+
+The app runs the analyzer in its own safe workspace and writes your report in the chat.
+
+**Privacy note:** the file goes to the AI company you chose. In that app's settings, turn off "use my chats to improve the model" (or similar) before you start, and delete the chat afterwards if you prefer.
 
 ## Quick Install
 
@@ -55,7 +80,7 @@ Skills are installed via [skills.sh](https://github.com/vercel-labs/skills), whi
 | Cline / Roo Code / OpenCode | `.agents/skills/` |
 | + 30 more | Detected automatically by `npx skills` |
 
-**Claude Desktop / claude.ai:** download this repo as a ZIP from GitHub, zip each folder inside `.claude/skills/` on its own, then go to Settings → Capabilities → Skills → Upload. Install the "Claude in Chrome" extension so Claude can use your browser.
+**Claude Desktop / claude.ai / ChatGPT:** download the ready-made ZIPs from the [Releases page](https://github.com/marketcalls/discord-roblox-child-safety/releases/latest) and upload them (see [No coding tools?](#no-coding-tools-use-the-chatgpt-or-claude-app)). With the "Claude in Chrome" extension, Claude can also use your browser to export the messages for you.
 
 **Any other AI:** open this folder and ask it to follow `.claude/skills/safety-review/SKILL.md`.
 
@@ -226,21 +251,21 @@ The warning signs this tool looks for come from real, publicly reported cases, n
 
 ## Prerequisites
 
-### 1. AI Agent
+### 1. An AI app or agent
 
-Any agent supported by `npx skills` (Claude Code, Cursor, Codex, Gemini CLI, Antigravity and more), or Claude Desktop. If your AI tool can't control a browser, that's fine: see "Way B" below.
+The **ChatGPT or Claude app** is enough (no coding). Developers can use any agent supported by `npx skills` (Claude Code, Cursor, Codex, Gemini CLI, Antigravity and more). If your AI tool can't control a browser, that's fine: see "Way B" below.
 
-### 2. Node.js 18+ (for installing)
+### 2. Node.js 18+ (coding agents only)
 
-`npx` comes with Node.js (free from nodejs.org). Only needed to install the skills.
+`npx` comes with Node.js (free from nodejs.org). Only needed to install the skills into a coding agent. App users skip this.
 
 ### 3. Google Chrome and your child's Discord login
 
 A computer with **Google Chrome** (Edge or Brave also work), and the ability to **log in to your child's Discord account** (you know the password, or your child logs in with you).
 
-### 4. Python 3.9+
+### 4. Python 3.9+ (coding agents only)
 
-Already on most Macs; free from python.org. No extra packages.
+Already on most Macs; free from python.org. No extra packages. The ChatGPT and Claude apps run the analyzer in their own workspace, so app users skip this.
 
 ### 5. Time
 

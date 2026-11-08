@@ -43,7 +43,8 @@ npx skills add marketcalls/discord-roblox-child-safety -l     # list the skills 
 ```
 
 - Install all seven skills together: the commands rely on `child-safety-expert` (rules, scripts) sitting next to them.
-- Claude Desktop / claude.ai: download the repo ZIP from GitHub, zip each folder inside `.claude/skills/` on its own, then Settings → Capabilities → Skills → Upload.
+- Claude Desktop / claude.ai: download the ZIPs from https://github.com/marketcalls/discord-roblox-child-safety/releases/latest → Settings → Capabilities → Skills → Upload each (always include `child-safety-expert.zip`). Turn on code execution so the analyzer can run.
+- ChatGPT: upload the same ZIPs in its Skills section (where the plan offers skills). The parent exports with the Console script (dm-export, parent-run) and attaches the JSON to the chat.
 - Any other AI: open the repo folder and ask it to follow `.claude/skills/safety-review/SKILL.md`.
 
 ## 4. Smoke test

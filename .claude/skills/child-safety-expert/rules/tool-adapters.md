@@ -18,8 +18,11 @@ Limits that apply everywhere: keep each JavaScript call under ~40 seconds (start
 - Alternative: Chrome DevTools MCP attached to the parent's Chrome (below).
 
 ## Claude Desktop / claude.ai
-- Download the repo ZIP, zip each folder in `.claude/skills/` on its own, then upload each in Settings → Capabilities → Skills.
+- Download the ready-made ZIPs from the repo's Releases page and upload each in Settings → Capabilities → Skills (always include `child-safety-expert.zip`). Turn on code execution so `analyze.py` can run in Claude's sandbox on the attached export.
 - Browser: Claude in Chrome extension. Without it, use parent-run export and attach the JSON + run the analyzer locally (Desktop can't run local Python unless you have a filesystem/terminal MCP; otherwise paste `summary.md`/`flags.md` into the chat).
+
+## ChatGPT app
+- Upload the same skill ZIPs in ChatGPT's Skills section (where the plan offers skills). No browser control: the parent runs the export in Chrome's Console (parent-run mode), attaches `discord_dm_export_*.json` to the chat, and asks for the `safety-review` skill. ChatGPT runs `analyze.py` in its code sandbox.
 
 ## OpenAI Codex (CLI / IDE)
 - `npx skills add marketcalls/discord-roblox-child-safety` installs into `.agents/skills/`, which Codex reads. Ask Codex to use the `safety-review` skill.
