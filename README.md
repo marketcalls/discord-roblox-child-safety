@@ -51,6 +51,7 @@ Install a specific skill only (always include `child-safety-expert`, the knowled
 npx skills add marketcalls/discord-roblox-child-safety -s safety-review child-safety-expert
 npx skills add marketcalls/discord-roblox-child-safety -s quick-check child-safety-expert
 npx skills add marketcalls/discord-roblox-child-safety -s contact-deep-dive child-safety-expert
+npx skills add marketcalls/discord-roblox-child-safety -s roblox-check child-safety-expert
 ```
 
 List available skills before installing:
@@ -120,8 +121,9 @@ Professionals should always work **with the parent's or guardian's consent**. Th
 | `/quick-check` | A fast first look: anything urgent? Who should I worry about? |
 | `/contact-deep-dive` | Everything about one contact: real teenager or adult? Which country? Other names? What did my child tell them? |
 | `/photo-review` | Safely checks pictures and videos, who sent what, and saves them if you want |
+| `/roblox-check` | Parent-led Roblox check: friends and Trusted Friends, join dates, chats from your screenshots, every relationship labelled |
 
-### Knowledge Base (17 Rule Files)
+### Knowledge Base (18 Rule Files)
 
 The `child-safety-expert` skill loads automatically and holds the knowledge the commands use.
 
@@ -132,6 +134,7 @@ The `child-safety-expert` skill loads automatically and holds the knowledge the 
 | **Sextortion** | "Send money or I'll post your pictures", especially aimed at teenage boys, and what to do in the first hour |
 | **"764"-style groups** | Networks that push children to hurt themselves on camera |
 | **Self-harm** | Signals in the child's own words and in friends' messages, and the crisis protocol |
+| **Roblox** | Where Roblox chats live, what Parental Controls show (and don't), age checks, Trusted Friends, Roblox-specific red flags |
 | **Scams** | Free Nitro, QR-code logins, fake Discord staff, Roblox trading and middleman scams, cookie-stealing "tools" |
 | **"Join servers for you" bots** | Apps that keep adding a child to scam, gambling or adult servers, even after bans |
 | **Identity** | Working out who someone really is: stated age, adult clues, other names, country from photo file clocks |
@@ -213,6 +216,16 @@ You don't have to read your child's private chats. The AI reads them for you and
 Want even less on your computer? Use privacy mode (`analyze.py --privacy`). It doesn't save full chat copies, only the warnings.
 
 Tip: tell your child afterwards that you did a safety check and left their good friendships private. It builds trust instead of breaking it.
+
+## What about Roblox chat?
+
+Most Roblox grooming moves to Discord, Snapchat or WhatsApp, which is why the Discord review goes deep. For Roblox itself, use `/roblox-check`:
+
+1. Link a parent account in Roblox **Parental Controls**. It shows friends, Trusted Friends, spending and screen time, but **not chat messages**.
+2. With your child, open the friends list, the **Trusted Friends** list and the chat panel, and take screenshots. For anyone you don't know, open their profile and note the **join date**.
+3. Give the screenshots to your AI with the `roblox-check` skill. Every Roblox friend gets the same Healthy / Mixed / Toxic / Dangerous label.
+
+**Why it isn't automatic:** Roblox's Terms of Use (from 1 Nov 2026) forbid automated tools that collect data for AI, and a linked parent account can't read chats. A manual, parent-led check keeps your child's account safe from a ban. In-game chat and voice are never stored by Roblox, so they can't be reviewed later. Details and sources: [`roblox-safety.md`](.claude/skills/child-safety-expert/rules/roblox-safety.md).
 
 ## A hidden danger most parents don't know about: "Join servers for you"
 
@@ -330,6 +343,14 @@ Or just say it in your own words:
 
 > *"Did anyone send my child nude or abusive pictures?"*
 
+### `/roblox-check` - Roblox Friends and Chats
+
+```
+/roblox-check ~/Desktop/roblox-screens 13
+```
+
+> *"Here are screenshots of my son's Roblox friends and chats. Is anyone unsafe?"*
+
 ### `/dm-export` - Save the Messages
 
 ```
@@ -367,9 +388,11 @@ More things you can ask:
 │       │   └── SKILL.md
 │       ├── photo-review/             # /photo-review - Safe photo and video review
 │       │   └── SKILL.md
+│       ├── roblox-check/             # /roblox-check - Parent-led Roblox review
+│       │   └── SKILL.md
 │       └── child-safety-expert/      # Knowledge base (auto-loaded)
 │           ├── SKILL.md              # Ground rules and rule-file index
-│           └── rules/                # 17 rule files
+│           └── rules/                # 18 rule files
 │               ├── risk-rubric.md
 │               ├── relationship-health.md
 │               ├── grooming-patterns.md
@@ -378,6 +401,7 @@ More things you can ask:
 │               ├── self-harm-signals.md
 │               ├── scams-roblox-discord.md
 │               ├── verification-bots-and-ban-evasion.md
+│               ├── roblox-safety.md
 │               ├── identity-and-age.md
 │               ├── photo-safety.md
 │               ├── real-world-cases.md
@@ -409,6 +433,7 @@ More things you can ask:
 | `self-harm-signals.md` | The child or a friend talks about dying, cutting, goodbye letters |
 | `scams-roblox-discord.md` | Robux, Nitro, middleman and cross-trading, QR codes, "accidentally reported you" |
 | `verification-bots-and-ban-evasion.md` | "Join servers for you" bots, apps that added the child to servers, warnings, risky server names, cookie-stealing tools, gambling |
+| `roblox-safety.md` | Roblox: where chats live, Parental Controls, age checks, Trusted Friends, red flags, why the review is parent-led |
 | `identity-and-age.md` | Who a contact really is: age, adult clues, other names, time zone from photo file names |
 | `photo-safety.md` | Any request to look at, list or save images and videos |
 | `real-world-cases.md` | Real cases from 2021 to 2026, with sources |

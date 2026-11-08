@@ -1,6 +1,6 @@
 ---
 name: child-safety-expert
-description: Knowledge base and toolkit for reviewing a child's or teen's Discord (and Roblox-linked) direct messages for safety with a parent's or guardian's consent — grooming, sexual content, financial sextortion, "764"/Com-style self-harm coercion, suicide and self-harm signals, scams (free Nitro, QR login, Roblox trading/middleman, account takeover), harassment, and identifying-detail leaks. Contains the risk rubric, real cases from 2021-2026, age/identity verification methods, helplines by country, report outline, and the bundled read-only export script and offline analyzer. Use whenever any child-online-safety, Discord, Roblox, predator, grooming, sextortion, cyberbullying or "check my kid's messages" topic comes up, and whenever the safety-review, quick-check, contact-deep-dive, photo-review, dm-export or setup skills need reference material.
+description: Knowledge base and toolkit for reviewing a child's or teen's Discord (and Roblox-linked) direct messages for safety with a parent's or guardian's consent — grooming, sexual content, financial sextortion, "764"/Com-style self-harm coercion, suicide and self-harm signals, scams (free Nitro, QR login, Roblox trading/middleman, account takeover), harassment, and identifying-detail leaks. Contains the risk rubric, real cases from 2021-2026, age/identity verification methods, helplines by country, report outline, and the bundled read-only export script and offline analyzer. Use whenever any child-online-safety, Discord, Roblox, predator, grooming, sextortion, cyberbullying or "check my kid's messages" topic comes up, and whenever the safety-review, quick-check, contact-deep-dive, photo-review, dm-export, roblox-check or setup skills need reference material.
 user-invocable: false
 ---
 
@@ -31,6 +31,7 @@ This is the knowledge base the other skills in this repo lean on. Read the rule 
 | `rules/scams-roblox-discord.md` | Robux, Nitro, middleman/cross-trading, QR codes, "accidentally reported you" |
 | `rules/verification-bots-and-ban-evasion.md` | "Join servers for you" / verify bots, apps that added the child to servers, account warnings, risky server names, Roblox cookie-stealing "tools", gambling servers |
 | `rules/relationship-health.md` | Labelling each relationship Healthy / Mixed / Unhealthy (toxic) / Dangerous, and keeping healthy friendships private |
+| `rules/roblox-safety.md` | Anything about Roblox: where chats live, what Parental Controls show, age checks and Trusted Friends, Roblox red flags, why Roblox review is parent-led (Terms of Use) |
 | `rules/identity-and-age.md` | Working out who a contact really is: age, adult hints, aliases, time zone from photo file names |
 | `rules/real-world-cases.md` | Explaining to a parent what real cases from 2021-2026 looked like, and for pattern matching |
 | `rules/photo-safety.md` | Any request to look at, list or save images and videos |
