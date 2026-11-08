@@ -1,6 +1,7 @@
 ---
 name: child-safety-expert
 description: Knowledge base and toolkit for reviewing a child's or teen's Discord (and Roblox-linked) direct messages for safety with a parent's or guardian's consent — grooming, sexual content, financial sextortion, "764"/Com-style self-harm coercion, suicide and self-harm signals, scams (free Nitro, QR login, Roblox trading/middleman, account takeover), harassment, and identifying-detail leaks. Contains the risk rubric, real cases from 2021-2026, age/identity verification methods, helplines by country, report outline, and the bundled read-only export script and offline analyzer. Use whenever any child-online-safety, Discord, Roblox, predator, grooming, sextortion, cyberbullying or "check my kid's messages" topic comes up, and whenever the safety-review, quick-check, contact-deep-dive, photo-review, dm-export or setup skills need reference material.
+user-invocable: false
 ---
 
 # Child-safety expert (Discord & Roblox)

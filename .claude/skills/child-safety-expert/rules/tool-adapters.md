@@ -13,24 +13,24 @@ The workflow needs four abilities. If your agent has them in the parent's logged
 Limits that apply everywhere: keep each JavaScript call under ~40 seconds (start long jobs without `await` and poll), and tool output is often truncated near 1–2 KB — the export avoids this by writing a file instead of printing.
 
 ## Claude Code
-- Install the skills: `./install.sh --claude-code` (copies to `~/.claude/skills/`) or open this repo folder (project skills in `.claude/skills/` load automatically).
+- Install: `npx skills add marketcalls/discord-roblox-child-safety` (add `-g` for all projects), or open this repo folder (project skills in `.claude/skills/` load automatically). Commands: `/safety-review`, `/quick-check`, `/contact-deep-dive`, `/photo-review`, `/dm-export`, `/setup`.
 - Browser: Claude in Chrome extension (claude.ai/chrome), signed in with the same account. The parent logs in to Discord in that Chrome. Check with the `tabs_context_mcp` tool; if "not connected", restart Chrome.
 - Alternative: Chrome DevTools MCP attached to the parent's Chrome (below).
 
 ## Claude Desktop / claude.ai
-- `./install.sh --zip` → upload each zip in Settings → Capabilities → Skills.
+- Download the repo ZIP, zip each folder in `.claude/skills/` on its own, then upload each in Settings → Capabilities → Skills.
 - Browser: Claude in Chrome extension. Without it, use parent-run export and attach the JSON + run the analyzer locally (Desktop can't run local Python unless you have a filesystem/terminal MCP; otherwise paste `summary.md`/`flags.md` into the chat).
 
 ## OpenAI Codex (CLI / IDE)
-- `AGENTS.md` at the repo root tells Codex how to use these files; open/run Codex in this folder. If your Codex version supports skills, `./install.sh --codex` copies them to `~/.codex/skills/`.
+- `npx skills add marketcalls/discord-roblox-child-safety` installs into `.agents/skills/`, which Codex reads. Ask Codex to use the `safety-review` skill.
 - Browser: add Chrome DevTools MCP to `~/.codex/config.toml` and attach it to the parent's Chrome, or use parent-run mode (recommended for most families).
 
 ## Cursor
-- Open this folder. `.cursor/rules/child-safety.mdc` and `AGENTS.md` give the agent the workflow.
+- `npx skills add marketcalls/discord-roblox-child-safety` installs into `.agents/skills/`, which Cursor reads.
 - Browser: Cursor's built-in browser tools (if enabled) or Chrome DevTools / Playwright MCP in Cursor's MCP settings. The parent must log in inside the browser the agent controls. Parent-run mode always works.
 
 ## Google Antigravity
-- Open this folder. `.agent/workflows/child-safety-review.md` (run it as a workflow) plus `AGENTS.md`/`GEMINI.md` apply.
+- `npx skills add marketcalls/discord-roblox-child-safety` (it detects Antigravity), or open this repo folder and ask the agent to follow `.claude/skills/safety-review/SKILL.md`.
 - Browser: Antigravity's browser agent uses its own Chrome profile — the parent logs in to Discord in that window, then the agent can run the script. Parent-run mode also works.
 
 ## Attaching Chrome DevTools MCP to the parent's Chrome
