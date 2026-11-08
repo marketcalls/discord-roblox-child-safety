@@ -32,6 +32,7 @@ Use this to rate every contact (handle) and to decide what is urgent. The analyz
 | location_meeting | where do you live, what school, address, pic outside your house, meet up | real-life friends arranging to meet |
 | secrecy_hiding | parents can't know, delete the app, alts, burner accounts | — |
 | home_abuse_disclosure | child says parents hit/injure them, "no freedom", "they don't want me" | — (always report neutrally to the adult; recommend family/clinical support) |
+| controlling_toxic | jealousy ("who were you talking to"), "don't talk to them", "you're mine", "why didn't you answer", guilt-tripping, "I'll hurt myself if you leave", put-downs, location demands — a *pattern*, often between same-age teens | one-off banter between close friends |
 | substances | "I'm high", weed, vape, drunk | "high" ranks in games |
 
 ## Escalators (raise one level)

@@ -9,10 +9,11 @@ Standard library only (Python 3.9+). Nothing leaves your computer.
 Outputs in --out:
   summary.md        overview, the child's own risk statements, ranked contacts, ages, calls, time zones
   flags.md          every flagged line with context, grouped by contact and category
-  contacts.csv      one row per contact with counts and heuristic score
+  contacts.csv      one row per contact with counts, heuristic score and a relationship-health hint
+                    (Looks healthy / Mixed / Unhealthy (toxic) / Dangerous)
   attachments.csv   every file/photo with sender, date and a link back to the Discord message
   calls.csv         DM call records (who started, when, how long)
-  transcripts/      one readable .txt per contact
+  transcripts/      one readable .txt per contact (skipped with --privacy)
 
 The scores are TRIAGE ONLY. Keyword lists over-match (gaming/trading slang) and
 under-match (misspellings, emojis, deleted messages). A human (or the AI, reading the
@@ -50,6 +51,10 @@ CATS = {
     "location_meeting": dict(weight=3, rx=r"(where (do|r|are) (you|u) live|what city|which city|(your|ur) address|my address|pin ?code|zip ?code|which school|what school|(your|ur) school name|outside (your|ur|my) house|pic (of )?outside|meet (up|irl|in person)|come over|i'?ll (visit|come to) (you|u|ur)|fly (to|out to) (you|u))"),
     "secrecy_hiding": dict(weight=3, rx=r"(don'?t tell (your|ur) (mom|dad|parents)|(mom|dad|parents) (can'?t|won'?t|don'?t) know|hide (it|this) from|i delete (discord|the app|it) every|delete (discord|the app)|use (a|an) alt|second account|burner)"),
     "home_abuse_disclosure": dict(weight=0, child=True, rx=r"(my (mom|mum|mother|dad|father|parents?) (hit|hits|beat|beats|slapped|hurt|hurts|injured|abuses?)|(parents|mom|dad) are (really )?abusive|injured me|kicked me out|took my phone|no freedom|(parents|they) don'?t (even )?want me)"),
+    # Relationship health (see relationship-health.md): control, jealousy, guilt-tripping, put-downs — also between same-age teens
+    "controlling_toxic": dict(weight=2, rx=r"(who (were|are|r) (you|u) (talking|texting|playing) (to|with)|why (were|are|r) (you|u) (talking|texting|playing) (to|with)|don'?t (talk|text|play) (to|with) (him|her|them|anyone else|other)|stop (talking|texting) to (him|her|them)|you'?re mine|ur mine|if (you|u) (leave|block|unfriend) me|i'?ll (kill|hurt) myself if (you|u)|answer me|why (aren'?t|arent|didn'?t|didnt|won'?t) (you|u) (answer|reply|respond|pick up)|you (never|don'?t) (care about|love) me|after (everything|all) i('?ve)? (did|done)|you owe me|you'?re (so |such an? )?(stupid|ugly|useless|annoying|pathetic|fat|worthless|idiot)|nobody else (will|would|could) (love|want|like)|only i (understand|care|love)|i'?m the only one (who|that)|(send|share) (me )?(your|ur) (live )?location|prove (you|u) love|you'?d do it if you loved me)"),
+    # Positive signals: never scored, never flagged — only used for the relationship-health hint
+    "supportive": dict(weight=0, positive=True, rx=r"\b(proud of (you|u)|here for (you|u)|(you|u)('?ve)? got this|good luck|how was (your|ur) (day|test|exam|school)|take care|are (you|u) (ok|okay|alright)|hope (you|u) feel better|feel better|thank (you|u)|thanks|thx|happy birthday|congrats|sorry|no worries|it'?s ok|you'?re (so )?(kind|sweet|funny|smart)|go to (sleep|bed)|get some sleep|study well|did (you|u) finish (your|ur) homework)\b"),
     "substances": dict(weight=1, rx=r"\b(weed|vape|vaping|smok(e|ing) (weed|a joint)|joint|blunt|drunk|alcohol|vodka|edibles?|i'?m high|im high|am high|pills)\b"),
 }
 for k in CATS:
@@ -148,6 +153,42 @@ def name_looks_like_bot(name):
     return bool(re.search(r"VERIFIED APP|\bAPP\b|\bBOT\b", name or ""))
 
 
+DANGER_CATS = ("sexual", "grooming", "sextortion_blackmail", "coercion_764_style", "scam_phishing",
+               "verification_bot_scam", "roblox_cookie_theft", "location_meeting", "secrecy_hiding")
+
+
+def relationship_health(kind, level, n, n_child, late_share, cc):
+    """A plain-language HINT for the parent: Healthy / Mixed / Unhealthy (toxic) / Dangerous.
+    Built from counts only (no quotes), so it can be shown without exposing the child's private chat.
+    The AI must confirm it by reading context (relationship-health.md). It never lowers the risk level."""
+    if not kind.startswith("Person"):
+        return "n/a (app or Discord)", ""
+    c = lambda k: cc[k]["contact"]
+    control, putdowns, secrecy = c("controlling_toxic"), c("abuse_harassment"), c("secrecy_hiding")
+    kind_words = cc["supportive"]["contact"] + cc["supportive"]["child"]
+    child_share = n_child / n if n else 0
+    why = []
+    if control: why.append(f"controlling/jealous/guilt-trip messages: {control}")
+    if putdowns: why.append(f"insults or threats: {putdowns}")
+    if secrecy: why.append(f"secrecy/hiding: {secrecy}")
+    danger = [k for k in DANGER_CATS if c(k)]
+    if danger: why.append("warning signs: " + ", ".join(f"{k} {c(k)}" for k in danger))
+    if n >= 100 and (child_share > 0.8 or child_share < 0.2): why.append(f"one-sided ({child_share:.0%} written by the child)")
+    if late_share > 0.3 and n > 300: why.append(f"{late_share:.0%} of messages between midnight and 5 AM")
+    if kind_words: why.append(f"kind/supportive messages: {kind_words}")
+    if level == "Critical" or (level == "High" and danger):
+        label = "Dangerous"
+    elif n < 20:
+        label = "Not enough to tell"
+    elif control + putdowns >= 3 or (control and secrecy) or putdowns >= 3:
+        label = "Unhealthy (toxic)"
+    elif control or putdowns or secrecy or danger or level in ("High", "Watch") or any("one-sided" in w or "midnight" in w for w in why):
+        label = "Mixed"
+    else:
+        label = "Looks healthy"
+    return label, "; ".join(why)
+
+
 def clean_name(name):
     return re.sub(r",? Server Tag:.*$|\s*\[[^\]]*\]$| VERIFIED APP( APP)?", "", name or "").strip()
 
@@ -165,10 +206,14 @@ def main():
     ap.add_argument("--child", default=None, help="child's display name if auto-detect is wrong")
     ap.add_argument("--context", type=int, default=3, help="lines of context around each flag")
     ap.add_argument("--max-per-cat", type=int, default=40, help="max flagged snippets per contact per category")
+    ap.add_argument("--privacy", action="store_true",
+                    help="privacy-first: no full transcripts, and flags.md only for contacts rated Watch or above")
     a = ap.parse_args()
 
     tz = ZoneInfo(a.tz) if (a.tz and ZoneInfo) else None
-    out = Path(a.out); (out / "transcripts").mkdir(parents=True, exist_ok=True)
+    out = Path(a.out); out.mkdir(parents=True, exist_ok=True)
+    if not a.privacy:
+        (out / "transcripts").mkdir(exist_ok=True)
     channels = load(a.exports)
     child = a.child or guess_child(channels)
     verified = has_verified_fields(channels)
@@ -219,7 +264,8 @@ def main():
             for k, c in ([] if official_msg else CATS.items()):
                 if c["re"].search(text):
                     cat_counts[k][side] += 1
-                    hits[k].append(i)
+                    if not c.get("positive"):
+                        hits[k].append(i)
                     if side == "child" and c.get("child"):
                         child_flags.append((lt, label, k, text[:300]))
             if side == "contact":
@@ -253,7 +299,8 @@ def main():
                 call_rows.append([label, f"{lt:%Y-%m-%d %H:%M}", who(starter.strip()) if starter.strip() != "You" else "CHILD",
                                   "missed" if cm.group("missed") else "started", dur.strip()])
 
-        (out / "transcripts" / (re.sub(r"[^\w.-]+", "_", label)[:60] + f"_{ch['id'][-4:]}.txt")).write_text("\n".join(lines), encoding="utf-8")
+        if not a.privacy:
+            (out / "transcripts" / (re.sub(r"[^\w.-]+", "_", label)[:60] + f"_{ch['id'][-4:]}.txt")).write_text("\n".join(lines), encoding="utf-8")
 
         n = len(msgs); n_child = sum(1 for m in msgs if m.get("author") == child)
         late_share = late / n if n else 0
@@ -272,14 +319,16 @@ def main():
         level = ("Critical" if score >= 60 or cat_counts["sextortion_blackmail"]["contact"] or cat_counts["coercion_764_style"]["contact"] >= 3 else
                  "High" if score >= 30 or impersonating or scam_hits else "Watch" if score >= 10 else "Low")
         tzo = statistics.median(tz_hints[label]) if tz_hints.get(label) else None
-        contacts.append(dict(contact=label, channel_id=ch["id"], type=ch.get("type", "dm"), level=level, kind=kind, score=score, messages=n,
+        health, health_why = relationship_health(kind, level, n, n_child, late_share, cat_counts)
+        contacts.append(dict(contact=label, channel_id=ch["id"], type=ch.get("type", "dm"), level=level,
+                             relationship_health=health, health_reasons=health_why, kind=kind, score=score, messages=n,
                              by_child=n_child, late_share=f"{late_share:.0%}", first=msgs[0]["ts"][:10], last=msgs[-1]["ts"][:10],
                              other_names="; ".join(clean_name(o) for o, _ in others.most_common(3)),
                              self_names=", ".join(sorted(selfnames)), age_claims=len(ages), adult_indicators=len(adult),
                              phone_clock_utc_offset=("" if tzo is None else f"UTC{tzo:+g}"),
                              **{k: f"{cat_counts[k]['contact']}/{cat_counts[k]['child']}" for k in CATS}))
 
-        if any(hits.values()) or ages or adult:
+        if (any(hits.values()) or ages or adult) and not (a.privacy and level == "Low"):
             flags_md.append((score, label, level, ch, msgs, lines, hits, ages, grades, adult, selfnames, tzo))
 
     contacts.sort(key=lambda r: -r["score"])
@@ -338,6 +387,14 @@ def main():
     else:
         sm.append("- none matched (still read the transcripts of the closest friends)")
     sm.append("\n## 2. Contacts ranked by heuristic score\n")
+    hc = Counter(r["relationship_health"] for r in contacts)
+    sm.append("**Relationship health (hint, from counts only — confirm by reading context):** " +
+              ", ".join(f"{k}: {v}" for k, v in hc.most_common()) + "\n")
+    sm.append("| Health | Why (counts only) | Contact | Level |\n|---|---|---|---|")
+    hord = {"Dangerous": 0, "Unhealthy (toxic)": 1, "Mixed": 2, "Looks healthy": 3, "Not enough to tell": 4}
+    for r in sorted(contacts, key=lambda r: (hord.get(r["relationship_health"], 9), -r["score"])):
+        sm.append(f"| {r['relationship_health']} | {md_cell(r['health_reasons']) or '—'} | {md_cell(r['contact'])} | {r['level']} |")
+    sm.append("")
     sm.append("| Level | Contact | Kind | Msgs | Late (0-5h) | Ages said | Adult hints | Phone clock | sexual | grooming | sextortion | location | off-platform | scam | verify-bot | cookie theft | gambling |")
     sm.append("|---|---|---|---:|---:|---:|---:|---|---|---|---|---|---|---|---|---|---|")
     order = {"Critical": 0, "High": 1, "Watch": 2, "Low": 3}

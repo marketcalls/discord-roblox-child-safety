@@ -44,6 +44,7 @@ Professionals should always work **with the parent's or guardian's consent**. Th
 | 🎰 Gambling | casino servers using Robux, game currency or real money |
 | 😡 Bullying and threats | insults, slurs, "kys", threats to share someone's address |
 | 📍 Private details leaked | real name, school, city, photos that show home or uniform |
+| 💚 Relationship health | is each friendship **healthy, mixed, toxic or dangerous**? Jealousy, control ("who were you talking to?"), guilt-tripping and put-downs count too, even between kids the same age |
 | 🌙 Healthy use | how many messages a day, how much happens between midnight and 5 AM |
 
 ## What you get
@@ -51,7 +52,7 @@ Professionals should always work **with the parent's or guardian's consent**. Th
 A private report (on your own computer) that says, in plain language:
 
 1. **Anything urgent** — and exactly what to do tonight.
-2. **Who your child talks to** — strangers or school friends, adults or kids — and a **risk level for every contact** (Critical, High, Watch, Low) with the reason.
+2. **Who your child talks to** — strangers or school friends, adults or kids — with a **relationship label** (Looks healthy, Mixed, Unhealthy/toxic, Dangerous) and a **risk level for every contact** (Critical, High, Watch, Low) with the reason.
 3. **The most worrying contacts in detail** — who they really seem to be (age, country, other names they use), with dated messages as evidence.
 4. **Your child's own words** about self-harm or problems at home, so you can get the right help.
 5. **Usage charts** — messages per day, and what time of night they're online.
@@ -63,6 +64,18 @@ A private report (on your own computer) that says, in plain language:
 ![Example usage charts with made-up data: messages per day by month, and what time of night the child is online](docs/images/example-usage.jpg)
 
 *Pictures use invented example data only.*
+
+## It respects your child's privacy
+
+You don't have to read your child's private chats. The AI reads them for you and gives you a **label for each relationship**:
+
+- **Looks healthy:** you see only the label, for example *"school friend, supportive"*. No quotes, no private topics like crushes or gossip.
+- **Mixed / Unhealthy (toxic):** you see the reason and a few short examples, so you know what to talk about.
+- **Dangerous:** you get the full evidence with dates, so you can act and report.
+
+Want even less on your computer? Use privacy mode (`analyze.py --privacy`). It doesn't save full chat copies, only the warnings.
+
+Tip: tell your child afterwards that you did a safety check and left their good friendships private. It builds trust instead of breaking it.
 
 ## Real cases it learned from (2021–2026)
 
@@ -93,7 +106,7 @@ People use this to:
 
 - ❌ It never asks for, types or stores your child's password. **You** log in.
 - ❌ It never sends, deletes or changes anything on your child's account. It only reads.
-- ❌ It never uploads your child's messages anywhere. Everything stays on your computer.
+- ❌ It never uploads your child's messages to any website or server. The files stay on your computer, and only the AI tool you chose reads them. Check that tool's privacy settings, for example turn off "use my chats for training".
 - ❌ It never opens or saves sexual images of children. If it suspects one, it gives you the link to report it instead (keeping such images is illegal, even for parents).
 - ✅ If it finds that your child may be in danger right now, it stops and tells you first.
 
@@ -167,6 +180,7 @@ cd discord-roblox-child-safety
 - *"Tell me everything about the contact called ___. Is he really 16?"*
 - *"Did anyone send my child nude or abusive pictures?"*
 - *"How many calls did she have, with whom, and how long?"*
+- *"Which of my child's friendships are healthy and which are toxic? Keep the healthy ones private."*
 - *"Write a summary I can show her psychiatrist."*
 
 ## If you find something serious

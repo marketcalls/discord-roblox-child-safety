@@ -6,7 +6,7 @@ Write for a worried, non-technical adult. Calm, specific, kind. Every serious cl
 2. **Summary** — 4–7 findings with severity chips (Critical / High / Watch / Reassuring). Include the answer to "strangers or school friends?".
 3. **Timeline** — dated events that matter (attempts, goodbye messages, first contact by risky adults, photo/location requests, bans/conflicts at home).
 4. **Highest-risk contact(s)** — profile: age/identity evidence, aliases, how they met, volume and late-night share, dated warning signs, what the child shared with them, what to do.
-5. **Everyone the child talks to** — table: contact, who they are, messages, late %, level, one-line reason. Group by level.
+5. **Everyone the child talks to** — table: contact, who they are, relationship health (Looks healthy / Mixed / Unhealthy (toxic) / Dangerous), messages, late %, level, one-line reason. Group by level. Healthy contacts get a label and one line only — no quotes (`relationship-health.md`). Name the supportive friends: they are a strength.
 6. **Usage** — messages/day by month, hour-of-day chart with the midnight–5 AM band, what drives it.
 7. **Location and identity leaks** — what online contacts know (name, school details, state/city hints, apartment, routine), photos by recipient.
 8. **Photos & calls** — totals, flagged items (no sexual content described), calls with dates and durations.

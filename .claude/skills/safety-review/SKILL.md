@@ -32,6 +32,7 @@ Work from the highest score down in `flags.md`, then open `transcripts/` for con
 - **Who** — stated age, school year, adult indicators, country/time zone (phone-file clock offset), how they met (server, game, school, in person). `rules/identity-and-age.md`.
 - **Aliases** — how the child addresses them, what they call themselves, mentions in other chats. Display names lie; join the dots across chats.
 - **Relationship** — school/real-life friend, online peer, online adult, romantic, trading. Volume, late-night share, who starts conversations, dependency.
+- **Relationship health** — Looks healthy / Mixed / Unhealthy (toxic) / Dangerous, per `rules/relationship-health.md`. Start from the analyzer's hint (`relationship_health`, `health_reasons`) and confirm it from context. Control, jealousy, guilt-tripping and put-downs count even between same-age teens.
 - **Red flags** — dated, quoted, short. Match against `rules/grooming-patterns.md`, `rules/sextortion.md`, `rules/coercion-networks-764.md`, `rules/scams-roblox-discord.md`.
 - **What the child told them** — self-harm, home problems, real name, school, city, photos.
 - **Level** — Critical / High / Watch / Low per `rules/risk-rubric.md`, with a one-line reason.
@@ -55,7 +56,7 @@ Only if asked. Use the `photo-review` skill. Never open images whose context sug
 
 ## Step 6 — Report
 
-Follow `rules/report-outline.md`. Lead with anything urgent. Default to a local HTML or Markdown file; publish nowhere unless the adult explicitly asks, and then privately. Include country helplines from `rules/helplines.md` and staged recommendations from `rules/parent-guidance.md` (no sudden bans in a crisis; professional help; talk without confronting).
+Follow `rules/report-outline.md`. Lead with anything urgent. **Respect the child's privacy:** for contacts that look healthy, give only the label and the kind of relationship — no quotes, no private topics. Quote only what the adult needs to act on. If the parent prefers not to keep full transcripts, run the analyzer with `--privacy`. Default to a local HTML or Markdown file; publish nowhere unless the adult explicitly asks, and then privately. Include country helplines from `rules/helplines.md` and staged recommendations from `rules/parent-guidance.md` (no sudden bans in a crisis; professional help; talk without confronting).
 
 ## Step 7 — Close out
 
